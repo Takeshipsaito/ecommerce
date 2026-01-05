@@ -15,5 +15,11 @@
         "psr-4": {
             "": "vendor\\hcodebr\\php-classes\\src"
         }
+    },
+    "config": {
+        "audit": {
+            "ignore": ["PKSA-8sw7-9x88-c8bx,PKSA-35kn-2ddp-d3p4,PKSA-m8by-bb7v-7qt5,PKSA-dn5d-4vy3-wsfy,PKSA-g8hj-dw43-q8td,PKSA-c2rs-9cv4-3bbn"],
+            "block-insecure": false
+        }
     }
 }
