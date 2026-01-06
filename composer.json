@@ -12,9 +12,9 @@
     	"rain/raintpl":"3.0.0"
     },
     "autoload": {
-        "psr-4": {
-            "hcode\\": "vendor\\hcodebr\\php-classes\\src"
-        }
+    "psr-4": {
+        "Hcode\\": "vendor/hcodebr/php-classes/src/"
+    }
     },
     "config": {
         "audit": {
