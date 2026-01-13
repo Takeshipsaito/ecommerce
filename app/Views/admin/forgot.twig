@@ -1,0 +1,64 @@
+{% if success %}
+    <div class="alert alert-success">
+        {{ success }}
+    </div>
+{% endif %}
+
+{% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+{% endif %}
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar senha</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+</head>
+
+<body class="hold-transition login-page">
+
+<div class="login-box">
+    <div class="login-logo">
+        <b>Admin</b>LTE
+    </div>
+
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">
+                Informe seu e-mail para recuperar a senha
+            </p>
+
+            <form method="post" action="{{ base_path() }}/admin/forgot">
+                <div class="input-group mb-3">
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        placeholder="E-mail"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Enviar link de recuperação
+                </button>
+            </form>
+
+            <br>
+
+            <p class="mb-1">
+                <a href="{{ base_path() }}/admin/login">
+                    Voltar para o login
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

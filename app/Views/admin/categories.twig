@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Categorias</title>
+</head>
+<body>
+
+<h1>Lista de Categorias</h1>
+
+<ul>
+    {% for category in categories %}
+        <li>{{ category.descategory }}</li>
+    {% else %}
+        <li>Nenhuma categoria encontrada</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

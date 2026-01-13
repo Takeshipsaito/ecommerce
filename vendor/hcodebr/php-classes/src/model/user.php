@@ -53,4 +53,11 @@ class User extends Model {
     {
         $_SESSION[self::SESSION] = null;
     }
+
+        public static function listall()
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) ORDER BY b.desperson");
+
+    }
 }

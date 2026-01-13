@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Email enviado</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+</head>
+
+<body class="hold-transition login-page">
+
+<div class="login-box">
+    <div class="card">
+        <div class="card-body text-center">
+
+            <div class="alert alert-success">
+                {{ success }}
+            </div>
+
+            <a href="{{ base_path() }}/admin/login" class="btn btn-primary btn-block">
+                Voltar para o login
+            </a>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

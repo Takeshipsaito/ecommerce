@@ -1,0 +1,53 @@
+{% extends "admin/layout.twig" %}
+
+{% block title %}Lista de Usuários{% endblock %}
+
+{% block content %}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Lista de Usuários</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <a href="/ecommerce/public/admin/users/create" class="btn btn-success">Cadastrar Usuário</a>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 10px">#</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Login</th>
+                        <th style="width: 40px">Admin</th>
+                        <th style="width: 140px">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# Agora com apenas UM loop correto #}
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.iduser }}</td>
+                        <td>{{ user.desperson }}</td> 
+                        <td>{{ user.desemail }}</td>
+                        <td>{{ user.deslogin }}</td>
+                        <td>{% if user.inadmin == 1 %}Sim{% else %}Não{% endif %}</td>
+                        <td>
+                            <a href="/ecommerce/public/admin/users/{{ user.iduser }}" class="btn btn-primary btn-xs">Editar</a>
+                            <a href="/ecommerce/public/admin/users/{{ user.iduser }}/delete" onclick="return confirm('Deseja excluir?')" class="btn btn-danger btn-xs">Excluir</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
