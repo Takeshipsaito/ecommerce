@@ -40,6 +40,10 @@ class ComposerStaticInit39f26009849913b557f64b05f94d29aa
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
         ),
+        'H' =>
+        array (
+            'Hcode\\' => 6,
+        ),
         'F' =>
         array (
             'Fig\\Http\\Message\\' => 17,
@@ -97,6 +101,10 @@ class ComposerStaticInit39f26009849913b557f64b05f94d29aa
         'Psr\\Container\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'Hcode\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/hcodebr/php-classes/src',
         ),
         'Fig\\Http\\Message\\' =>
         array (

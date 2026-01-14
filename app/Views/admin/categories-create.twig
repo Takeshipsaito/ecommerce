@@ -1,0 +1,29 @@
+{% extends "admin/layout.twig" %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+      <h1>Cadastrar Categoria</h1>
+    </section>
+
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-success">
+            <form role="form" action="/ecommerce/public/admin/categories/create" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="descategory">Nome da categoria</label>
+                  <input type="text" class="form-control" id="descategory" name="descategory" placeholder="Digite o nome da categoria">
+                </div>
+              </div>
+              <div class="box-footer">
+                <button type="submit" class="btn btn-success">Salvar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+</div>
+{% endblock %}
