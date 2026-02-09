@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
@@ -12,10 +13,10 @@ class AuthAdminMiddleware
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
+
         if (!isset($_SESSION['admin'])) {
-            $response = new Response();
-            return $response
-                ->withHeader('Location', '/ecommerce/public/admin/login')
+            return (new Response())
+                ->withHeader('Location', BASE_URL . '/admin/login')
                 ->withStatus(302);
         }
 

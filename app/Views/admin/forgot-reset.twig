@@ -1,0 +1,10 @@
+<form action="/ecommerce/public/admin/forgot/reset" method="post">
+    <input type="hidden" name="code" value="{{ code }}">
+    
+    <div class="form-group">
+        <label for="password">Digite sua nova senha:</label>
+        <input type="password" name="password" id="password" class="form-control" required>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Alterar Senha</button>
+</form>

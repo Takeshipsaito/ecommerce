@@ -2,26 +2,43 @@
 
 {% block content %}
 <div class="content-wrapper">
-    <section class="content-header">
-      <h1>Cadastrar Categoria</h1>
+    <section class="content-header" style="padding-bottom: 15px;">
+      <h1><i class="fa fa-tags"></i> Gerenciar Categorias</h1>
     </section>
 
     <section class="content">
       <div class="row">
-        <div class="col-md-12">
-          <div class="box box-success">
-            <form role="form" action="/ecommerce/public/admin/categories/create" method="post">
-              <div class="box-body">
+        <div class="col-md-6 col-md-offset-3">
+          
+          <div class="box box-success" style="border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div class="box-header with-border">
+              <h3 class="box-title" style="font-weight: bold;">Nova Categoria</h3>
+            </div>
+            
+            <form role="form" action="{{ BASE_URL }}/admin/categories/create" method="post">
+              <div class="box-body" style="padding: 20px;">
+                
                 <div class="form-group">
-                  <label for="descategory">Nome da categoria</label>
-                  <input type="text" class="form-control" id="descategory" name="descategory" placeholder="Digite o nome da categoria">
+                  <label for="descategory">Nome da Categoria</label>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #eee;"><i class="fa fa-pencil"></i></span>
+                    <input type="text" name="descategory" class="form-control" id="descategory" placeholder="Ex: Eletrônicos, Roupas..." required>
+                  </div>
                 </div>
+
               </div>
-              <div class="box-footer">
-                <button type="submit" class="btn btn-success">Salvar</button>
+              
+              <div class="box-footer" style="background-color: #f9f9f9; padding: 15px;">
+                <a href="{{ BASE_URL }}/admin/categories" class="btn btn-default" style="border-radius: 3px;">
+                  <i class="fa fa-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="btn btn-success pull-right" style="border-radius: 3px; font-weight: bold;">
+                  <i class="fa fa-save"></i> Salvar Categoria
+                </button>
               </div>
             </form>
           </div>
+          
         </div>
       </div>
     </section>

@@ -1,146 +1,228 @@
-<?php 
+<?php
 
 namespace App\Models;
 
-use App\DB\Sql; // <--- Isso garante que ele use o arquivo da pasta DB que acabamos de criar
-use Hcode\Model;
+use App\DB\Sql;
 
-class User {
+class User
+{
+    private array $data = [];
 
-    private $values = [];
-
-    public function setData($data) {
-        foreach ($data as $key => $value) {
-            $this->values[$key] = $value;
-        }
+    public function setData(array $data): void
+    {
+        $this->data = $data;
     }
 
-    public function getValues() {
-        return $this->values;
+    public function getValues(): array
+    {
+        return $this->data;
     }
 
-    public function __call($name, $args) {
+    public function __call($name, $args)
+    {
         $method = substr($name, 0, 3);
-        $fieldName = strtolower(substr($name, 3));
+        $field  = strtolower(substr($name, 3));
 
-        if ($method == "get") {
-            return (isset($this->values[$fieldName])) ? $this->values[$fieldName] : NULL;
+        if ($method === 'set') {
+        $this->data[$field] = $args[0];
         }
+
     }
 
-    public function get($iduser) {
+    public function loadByEmail(string $email): void
+    {
+    $sql = new Sql();
+
+    $result = $sql->select("
+        SELECT u.*, p.desemail
+        FROM tb_users u
+        INNER JOIN tb_persons p ON p.idperson = u.idperson
+        WHERE p.desemail = :email
+        LIMIT 1
+    ",[
+        ':email'=>$email
+    ]);
+
+    if($result){
+        $this->setData($result[0]);
+    }
+    }
+
+    public function loadByToken(string $token): void
+    {
+    $sql = new Sql();
+
+    $result = $sql->select("
+        SELECT *
+        FROM tb_users
+        WHERE reset_token = :token
+        LIMIT 1
+    ",[
+        ':token'=>$token
+    ]);
+
+    if($result){
+        $this->setData($result[0]);
+    }
+    }
+
+    /* ==========================
+       LISTAR USUÁRIOS
+    ========================== */
+    public static function listAll(): array
+    {
         $sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_users WHERE iduser = :iduser", [
-            ":iduser" => $iduser
+
+        return $sql->select("
+            SELECT 
+                u.iduser,
+                p.desperson,
+                p.desemail,
+                u.deslogin,
+                u.inadmin,
+                u.dtregister
+            FROM tb_users u
+            INNER JOIN tb_persons p ON p.idperson = u.idperson
+            ORDER BY u.iduser ASC
+        ");
+    }
+
+
+    /* ==========================
+       BUSCAR UM USUÁRIO
+    ========================== */
+    public function get(int $iduser): void
+    {
+        $sql = new Sql();
+
+        $result = $sql->select("
+            SELECT 
+                u.iduser,
+                p.desperson,
+                p.desemail,
+                p.nrphone,
+                u.deslogin,
+                u.inadmin
+            FROM tb_users u
+            INNER JOIN tb_persons p ON p.idperson = u.idperson
+            WHERE u.iduser = :iduser
+        ", [
+            ':iduser' => $iduser
         ]);
 
-        if (count($results) > 0) {
-            $this->setData($results[0]);
+        if ($result) {
+            $this->setData($result[0]);
         }
     }
 
-    public function update() {
-    $sql = new \App\DB\Sql();
 
-    // Tratando o telefone vazio para evitar o erro 1366
-    $phone = $this->getnrphone();
-    if (!$phone || $phone == "") {
-        $phone = 0; 
+    /* ==========================
+       CRIAR USUÁRIO
+    ========================== */
+    public function save(): void
+    {
+        $sql = new Sql();
+
+        // 1️⃣ cria a pessoa
+        $sql->execute("
+            INSERT INTO tb_persons (desperson, desemail, nrphone)
+            VALUES (:desperson, :desemail, :nrphone)
+        ", [
+            ':desperson' => $this->getdesperson(),
+            ':desemail'  => $this->getdesemail(),
+            ':nrphone' => (int) preg_replace('/\D/', '', $this->getnrphone())
+        ]);
+
+        // 2️⃣ pega o idperson criado
+        $idperson = (int)$sql
+            ->select("SELECT LAST_INSERT_ID() AS idperson")[0]['idperson'];
+
+        // 3️⃣ cria o usuário
+        $sql->execute("
+            INSERT INTO tb_users (idperson, deslogin, despassword, inadmin)
+            VALUES (:idperson, :deslogin, :despassword, :inadmin)
+        ", [
+            ':idperson'    => $idperson,
+            ':deslogin'    => $this->getdeslogin(),
+            ':despassword' => password_hash($this->getdespassword(), PASSWORD_BCRYPT),
+            ':inadmin'     => (int)$this->getinadmin()
+        ]);
     }
 
-    $sql->select("CALL sp_users_update(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", [
-        ":iduser"      => (int)$this->getiduser(),
-        ":desperson"   => $this->getdesperson(),
-        ":deslogin"    => $this->getdeslogin(),
-        ":despassword" => password_hash($this->getdespassword(), PASSWORD_BCRYPT),
-        ":desemail"    => $this->getdesemail(),
-        ":nrphone"     => $phone, // Enviando o valor tratado
-        ":inadmin"     => (int)$this->getinadmin()
-    ]);
-}
 
-  public static function listAll() {
-    $sql = new Sql();
-    
-    // Fazemos um JOIN para buscar o nome que está na tabela tb_persons
-    return $sql->select("
-        SELECT * FROM tb_users a 
-        INNER JOIN tb_persons b ON a.idperson = b.idperson 
-        ORDER BY b.desperson
-    ");
-}
-public function save() {
-    $sql = new \App\DB\Sql();
+    /* ==========================
+       ATUALIZAR USUÁRIO
+    ========================== */
+    public function update(): void
+    {
+        $sql = new Sql();
 
-    // Tratando o telefone vazio antes de enviar para o banco
-    $phone = $this->getnrphone();
-    if (!$phone || $phone == "") {
-        $phone = 0; 
+        // atualiza pessoa
+        $sql->execute("
+            UPDATE tb_persons SET
+                desperson = :desperson,
+                desemail  = :desemail,
+                nrphone   = :nrphone
+            WHERE idperson = (
+                SELECT idperson FROM tb_users WHERE iduser = :iduser
+            )
+        ", [
+            ':desperson' => $this->getdesperson(),
+            ':desemail'  => $this->getdesemail(),
+            ':nrphone'   => $this->getnrphone(),
+            ':iduser'    => $this->getiduser()
+        ]);
+
+        // atualiza usuário
+        $sql->execute("
+            UPDATE tb_users SET
+                deslogin = :deslogin,
+                inadmin  = :inadmin
+            WHERE iduser = :iduser
+        ", [
+            ':deslogin' => $this->getdeslogin(),
+            ':inadmin'  => (int)$this->getinadmin(),
+            ':iduser'   => $this->getiduser()
+        ]);
     }
 
-    $results = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", [
-        ":desperson"   => $this->getdesperson(),
-        ":deslogin"    => $this->getdeslogin(),
-        ":despassword" => password_hash($this->getdespassword(), PASSWORD_BCRYPT),
-        ":desemail"    => $this->getdesemail(),
-        ":nrphone"     => $phone, // Variável tratada
-        ":inadmin"     => $this->getinadmin()
-    ]);
 
-    if (count($results) > 0) {
-        $this->setData($results[0]);
-    }
-}
-public function delete() {
-    $sql = new \App\DB\Sql();
-    // Primeiro pegamos o idperson para limpar a tb_persons depois
-    $idperson = $this->getidperson();
-
-    // Deleta o usuário (a tb_users geralmente tem FK com a tb_persons)
-    $sql->rawQuery("DELETE FROM tb_users WHERE iduser = :iduser", [
-        ":iduser" => $this->getiduser()
-    ]);
-
-    // Deleta a pessoa
-    $sql->rawQuery("DELETE FROM tb_persons WHERE idperson = :idperson", [
-        ":idperson" => $idperson
-    ]);
-}
-
-public static function getForgot(string $email)
+    /* ==========================
+         EXCLUIR USUÁRIO
+    ========================== */
+public function delete(): void
 {
     $sql = new Sql();
 
-    $results = $sql->select("
-        SELECT *
-        FROM tb_users a
-        INNER JOIN tb_persons b ON a.idperson = b.idperson
-        WHERE b.desemail = :email
-    ", [
-        ':email' => $email
-    ]);
+    // 1️⃣ Pega o idperson antes de deletar o usuário
+    $result = $sql->select(
+        "SELECT idperson FROM tb_users WHERE iduser = :id",
+        [':id' => $this->getiduser()]
+    );
 
-    if (count($results) === 0) {
-        throw new \Exception("Não foi possível recuperar a senha.");
+    if (!$result) {
+        return;
     }
 
-    $data = $results[0];
+    $idperson = (int)$result[0]['idperson'];
 
-    // Gera token seguro
-    $token = bin2hex(openssl_random_pseudo_bytes(32));
 
-    // Salva pedido de recuperação
-    $sql->rawQuery("
-        INSERT INTO tb_userspasswordsrecoveries
-        (iduser, desip, dtrecovery)
-        VALUES (:iduser, :ip, DATE_ADD(NOW(), INTERVAL 1 HOUR))
-    ", [
-        ':iduser' => $data['iduser'],
-        ':ip'     => $_SERVER['REMOTE_ADDR']
-    ]);
+    // Deleta registros de recuperação de senha primeiro
+    $sql->execute(
+        "DELETE FROM tb_userspasswordsrecoveries WHERE iduser = :id",
+        [':id' => $this->getiduser()]
+    );
 
-    // 🔜 próximo passo do curso: enviar email
+    // Apaga o registro na tabela de usuários
+    $sql->execute(
+        "DELETE FROM tb_users WHERE iduser = :id",
+        [':id' => $this->getiduser()]
+    );
+
+    // Apaga o registro na tabela de pessoas
+    $sql->execute(
+        "DELETE FROM tb_persons WHERE idperson = :idperson",
+        [':idperson' => $idperson]
+    );
 }
-
 }
-

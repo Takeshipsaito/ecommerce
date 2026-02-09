@@ -27,22 +27,27 @@
                         <th>E-mail</th>
                         <th>Login</th>
                         <th style="width: 40px">Admin</th>
-                        <th style="width: 140px">&nbsp;</th>
+                        <th style="width: 160px">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {# Agora com apenas UM loop correto #}
                     {% for user in users %}
                     <tr>
-                        <td>{{ user.iduser }}</td>
+                        <!-- Número sequencial começando do 1 -->
+                        <td>{{ loop.index }}</td>
                         <td>{{ user.desperson }}</td> 
                         <td>{{ user.desemail }}</td>
                         <td>{{ user.deslogin }}</td>
                         <td>{% if user.inadmin == 1 %}Sim{% else %}Não{% endif %}</td>
                         <td>
-                            <a href="/ecommerce/public/admin/users/{{ user.iduser }}" class="btn btn-primary btn-xs">Editar</a>
-                            <a href="/ecommerce/public/admin/users/{{ user.iduser }}/delete" onclick="return confirm('Deseja excluir?')" class="btn btn-danger btn-xs">Excluir</a>
+                            <!-- Botões estilizados como nas categorias -->
+                            <a href="/ecommerce/public/admin/users/{{ user.iduser }}/edit" class="btn btn-success btn-sm">Editar</a>
+                            <a href="/ecommerce/public/admin/users/{{ user.iduser }}/delete" onclick="return confirm('Deseja excluir?')" class="btn btn-danger btn-sm">Excluir</a>
                         </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">Nenhum usuário encontrado</td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -4,45 +4,85 @@
 
 {% block content %}
 <section class="content-header">
-    <div class="container-fluid">
-        <h1>Editar Usuário</h1>
-    </div>
+    <h1>Editar Usuário</h1>
 </section>
 
 <section class="content">
     <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">Editar Usuário</h3>
-        </div>
-        
-        <form role="form" action="/ecommerce/public/admin/users/{{ user.iduser }}" method="post">
-            <div class="card-body">
-                <div class="form-group">
-                    <label for="desperson">Nome</label>
-                    <input type="text" class="form-control" id="desperson" name="desperson" placeholder="Digite o nome" value="{{ user.nome }}">
-                </div>
-                <div class="form-group">
-                    <label for="nrphone">Telefone</label>
-                    <input type="tel" class="form-control" id="nrphone" name="nrphone" placeholder="Digite o telefone" value="{{ user.telefone }}">
-                </div>
-                <div class="form-group">
-                    <label for="desemail">E-mail</label>
-                    <input type="email" class="form-control" id="desemail" name="desemail" placeholder="Digite o e-mail" value="{{ user.email }}">
-                </div>
-                <div class="form-group">
-                    <label for="despassword">Senha</label>
-                    <input type="password" class="form-control" id="despassword" name="despassword" placeholder="Digite a senha">
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="inadmin" name="inadmin" value="1" {% if user.admin == 1 %}checked{% endif %}>
-                    <label class="form-check-label" for="inadmin">Acesso de Administrador</label>
-                </div>
-            </div>
+        <div class="card-body">
 
-            <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </div>
-        </form>
+            <form method="post"
+                  action="/ecommerce/public/admin/users/{{ user.iduser }}/edit">
+
+                <input type="hidden"
+                    name="deslogin"
+                     value="{{ user.deslogin }}">
+
+
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text"
+                           name="desperson"
+                           class="form-control"
+                           value="{{ user.desperson }}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="tel"
+                           name="nrphone"
+                           class="form-control"
+                           value="{{ user.nrphone }}">
+                </div>
+                <div class="form-group">
+                    <label>Login</label>
+                    <input type="text"
+                           name="deslogin"
+                           class="form-control"
+                           value="{{ user.deslogin }}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email"
+                           name="desemail"
+                           class="form-control"
+                           value="{{ user.desemail }}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password"
+                           name="despassword"
+                           class="form-control"
+                           placeholder="Deixe em branco para não alterar">
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox"
+                           name="inadmin"
+                           value="1"
+                           {% if user.inadmin == 1 %}checked{% endif %}>
+                    <label class="form-check-label">Administrador</label>
+                </div>
+
+                
+                <br>
+
+                <button type="submit" class="btn btn-primary">
+                    Salvar
+                </button>
+
+                <a href="/ecommerce/public/admin/users" class="btn btn-secondary">
+                    Voltar
+                </a>
+
+            </form>
+
+        </div>
     </div>
 </section>
 {% endblock %}

@@ -1,37 +1,45 @@
-<?php 
+<?php
 
 namespace App\DB;
 
-use \PDO;
+use PDO;
 
-class Sql extends PDO {
-
-    public function __construct() {
-        // Usamos parent para conectar direto na classe pai (PDO)
-        parent::__construct("mysql:host=127.0.0.1;dbname=db_ecommerce", "root", "a");
-        $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+class Sql extends PDO
+{
+    public function __construct()
+    {
+        parent::__construct(
+            "mysql:host=127.0.0.1;dbname=db_ecommerce;charset=utf8",
+            "root",
+            "a",
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]
+        );
     }
 
-    private function setParams($statement, $parameters = array()) {
-        foreach ($parameters as $key => $value) {
-            $this->setParam($statement, $key, $value);
+    public function select(string $query, array $params = []): array
+    {
+        $stmt = $this->prepare($query);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
         }
-    }
 
-    private function setParam($statement, $key, $value) {
-        $statement->bindParam($key, $value);
-    }
-
-    // Usamos rawQuery para evitar conflito com o PDO nativo
-    public function rawQuery($rawQuery, $params = array()) {
-        $stmt = $this->prepare($rawQuery);
-        $this->setParams($stmt, $params);
         $stmt->execute();
-        return $stmt;
+
+        return $stmt->fetchAll();
     }
 
-    public function select($rawQuery, $params = array()):array {
-        $stmt = $this->rawQuery($rawQuery, $params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function execute(string $query, array $params = []): void
+    {
+        $stmt = $this->prepare($query);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->execute();
     }
 }
